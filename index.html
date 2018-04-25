@@ -3,66 +3,112 @@
 	<head>
 		<meta charset="utf-8">
 		<meta http-equiv="x-ua-compatible" content="ie=edge">
-		<title> ¯\_(ツ)_/¯ </title>
+		<title>Week3-HW-NYT</title>
 		<meta name="description" content="">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 
 		<link rel="stylesheet" href="dist/css/main.css">
 
-		<!--
-			Do I work in src or dist?
-			Newbies work in dist, smarty-pants gulp users work in src.
-			Go here to learn more:
-			https://stackoverflow.com/questions/23730882/what-is-the-role-of-src-and-dist-folders
-		-->
-		
 	</head>
 	<body>
 
 		<form class="input-form">
-			Search NYT Articles<input id="input-field" type="text" name="text">
-			<button id="search-btn">Search</button>
+			Search NYT Articles<input id="input_field" type="text" name="text">
+			<button id="search_btn">Search</button>
 		</form>
 
+		<ul id="content">
+			
+		</ul>
 
 		<script src="dist/js/main.js"></script>
 
 		<script src="https://unpkg.com/axios/dist/axios.min.js" type="text/javascript"></script>
 
 		<script type="text/javascript">
+
+		// search function
+		const searchBtn = document.getElementById('search_btn');
+			searchBtn.addEventListener('click', function(e) {
+				e.preventDefault();
+				const inputField = document.getElementById('input_field').value
+				getApiData();  /*callback*/
 		
-(function (){
-
-	
-		function submitBtn (){
-		const searchBtn = document.getElementById('search-btn');
-		searchBtn.addEventListener('click', getApiData);
-		};
-
 		// Get Request
 		function getApiData() {
-			const inputField = document.getElementById('input-field')
-			const search = inputField.value;
-			console.log("you typed in:", search);
+			console.log("you typed in:", inputField);
+			
+			var url = "https://api.nytimes.com/svc/search/v2/articlesearch.json?";
 			var apiKey = "8df111cf19594e00ab44036caefe9f6c";
-			var url = "https://api.nytimes.com/svc/search/v2/articlesearch.json";
-			url += 'api-key' + apiKey + '&';
-			url += "q=" + encodeURIComponent(search) + '&';
+			url += 'api-key=' + apiKey + '&';
+			url += "q=" + inputField;
 			
 			axios.get(url)
-				.then(function (data) {
-					console.log("here is some data from NYT: ", data);
+				.then(function(response) {
+					console.log("here is some data from NYT: ", response)
+					queryData(data);
 				})
+
+				.then(function() {
+					queryData(data);
+				})
+
 				.catch(function (error) {
 					console.log('data not found');
 				})
 
-		}
-	
+			}
+		});
+				// Query the info
+			function queryData(data) {
+				 var content = document.getElementById('content');
+				 const articles = data.response.docs;
+				 console.log(articles);
+				 if (articles) {
 
 
+				 	articles.innerHTML = '';
 
-})
+				 	for (var i = articles.length - 1; i >= 0; i--) {
+				 		 var article = articles[i]
+
+
+				 		 var dataUrl = doc.web_url;
+				 		 var headline = doc.headline.main;
+				 		 var img = null;
+
+				 		 if (doc.multimedia && doc.multimedia.length > 0 ) {
+				 		 	img = "http://www.nytimes.com/" + doc.multimedia['0'].url
+				 		 } else {
+				 		 	img = null;
+				 		 }
+
+
+				 		 var li = document.createElement('li');
+				 		 var a = document.createElement('a');
+				 		 var text = document.createTextNode(title);
+
+
+				 		 if (img) {
+				 		 	var createImg = document.createElement("img");
+				 		 	createImg.setAttribute('src', img);
+				 		 	createImg.setAttribute('class', "image");
+				 		 	a.appendChild(createImg);
+				 		 }
+
+				 		 a.setAttribute('href', dataUrl);
+				 		 a.setAttribute('target', '_blank');
+
+				 		 a.appendChild(text);
+				 		 li.appendChild(a);
+
+				 		 content.appendChild(li);
+
+				 	}
+				 
+				 }
+			
+			}
 
 		</script>
 
