@@ -30,25 +30,26 @@
 		<script src="https://unpkg.com/axios/dist/axios.min.js" type="text/javascript"></script>
 
 		<script type="text/javascript">
-		// variables
-		var url = "https://api.nytimes.com/svc/search/v2/articlesearch.json?q=&api-key=8df111cf19594e00ab44036caefe9f6c"
-		const searchBtn = document.getElementById('search-btn');
-		const inputField = document.getElementById('input-field');
 		
-		console.log(inputField);	
-		console.log(url);
-		console.log(searchBtn);
+(function (){
 
-		searchBtn.addEventListener('click', function(e) {
-			e.preventDefault();
-			const inputValue = inputField.value;
-			console.log(inputValue);
-			getValueFromApi(inputValue);
+	
+		function submitBtn (){
+		const searchBtn = document.getElementById('search-btn');
+		searchBtn.addEventListener('click', getApiData);
+		};
+
+		// Get Request
+		function getApiData() {
+			const inputField = document.getElementById('input-field')
+			const search = inputField.value;
+			console.log("you typed in:", search);
+			var apiKey = "8df111cf19594e00ab44036caefe9f6c";
+			var url = "https://api.nytimes.com/svc/search/v2/articlesearch.json";
+			url += 'api-key' + apiKey + '&';
+			url += "q=" + encodeURIComponent(search) + '&';
 			
-		});
-
-		function getValueFromApi(e) {
-			axios.get(url, "?q=", inputField.value)
+			axios.get(url)
 				.then(function (data) {
 					console.log("here is some data from NYT: ", data);
 				})
@@ -61,7 +62,7 @@
 
 
 
-
+})
 
 		</script>
 
