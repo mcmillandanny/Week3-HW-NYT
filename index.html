@@ -26,90 +26,63 @@
 		<script src="https://unpkg.com/axios/dist/axios.min.js" type="text/javascript"></script>
 
 		<script type="text/javascript">
+// search function
+ var content = document.getElementById('content');
+const searchBtn = document.getElementById('search_btn');
+searchBtn.addEventListener('click', function(e) {
+    console.log("function is running")
+    e.preventDefault();
+    let inputField = document.getElementById('input_field').value
+    getApiData(); /*callback*/
 
-		// search function
-		const searchBtn = document.getElementById('search_btn');
-			searchBtn.addEventListener('click', function(e) {
-				e.preventDefault();
-				const inputField = document.getElementById('input_field').value
-				getApiData();  /*callback*/
-		
-		// Get Request
-		function getApiData() {
-			console.log("you typed in:", inputField);
-			
-			var url = "https://api.nytimes.com/svc/search/v2/articlesearch.json?";
-			var apiKey = "8df111cf19594e00ab44036caefe9f6c";
-			url += 'api-key=' + apiKey + '&';
-			url += "q=" + inputField;
-			
-			axios.get(url)
-				.then(function(response) {
-					console.log("here is some data from NYT: ", response)
-					queryData(data);
-				})
+    // Get Request
+    function getApiData() {
+        console.log("you typed in:", inputField);
 
-				.then(function() {
-					queryData(data);
-				})
+        var url = "https://api.nytimes.com/svc/search/v2/articlesearch.json?";
+        var apiKey = "8df111cf19594e00ab44036caefe9f6c";
+        url += 'api-key=' + apiKey + '&';
+        url += "q=" + inputField;
 
-				.catch(function (error) {
-					console.log('data not found');
-				})
+        axios.get(url)
+            .then(function(response) {
+                console.log("here is some data from NYT: ", response)
+                displayArticles(response)
+            })
 
-			}
-		});
-				// Query the info
-			function queryData(data) {
-				 var content = document.getElementById('content');
-				 const articles = data.response.docs;
-				 console.log(articles);
-				 if (articles) {
+            .catch(function(error) {
+                console.error(error, 'data not found');
+            })
 
+    }
+});
+// Query the info
+// function displayArticles(response) {
 
-				 	articles.innerHTML = '';
-
-				 	for (var i = articles.length - 1; i >= 0; i--) {
-				 		 var article = articles[i]
+    //     //     // if (doc.multimedia && doc.multimedia.length > 0) {
+    //     //     //     img = "http://www.nytimes.com/" + doc.multimedia['0'].url
+    //     //     // } else {
+    //     //     //     img = null;
+    //     //     // }
 
 
-				 		 var dataUrl = doc.web_url;
-				 		 var headline = doc.headline.main;
-				 		 var img = null;
-
-				 		 if (doc.multimedia && doc.multimedia.length > 0 ) {
-				 		 	img = "http://www.nytimes.com/" + doc.multimedia['0'].url
-				 		 } else {
-				 		 	img = null;
-				 		 }
 
 
-				 		 var li = document.createElement('li');
-				 		 var a = document.createElement('a');
-				 		 var text = document.createTextNode(title);
+ var displayArticles = function(response) {
+      const articles = response.data.response.docs;
+        articles.forEach(article =>  {
+        var li =  document.createElement('li');
+        var a = document.createElement('a');
+        var h1 = document.createElement('h2');
+        var p = document.createElement('p');
+        h1.innerHTML = article.headline.main;
+        li.appendChild(h1); 
+        content.appendChild(li);
+    })
+ }
+//     }
 
-
-				 		 if (img) {
-				 		 	var createImg = document.createElement("img");
-				 		 	createImg.setAttribute('src', img);
-				 		 	createImg.setAttribute('class', "image");
-				 		 	a.appendChild(createImg);
-				 		 }
-
-				 		 a.setAttribute('href', dataUrl);
-				 		 a.setAttribute('target', '_blank');
-
-				 		 a.appendChild(text);
-				 		 li.appendChild(a);
-
-				 		 content.appendChild(li);
-
-				 	}
-				 
-				 }
-			
-			}
-
+// }
 		</script>
 
 	</body>
